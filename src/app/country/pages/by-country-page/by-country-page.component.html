@@ -1,7 +1,4 @@
 <country-search-input placeholder="Buscar por país" (value)="query.set($event)" />
 
-@if (countryResoruce.error()){
-<h3> {{countryResoruce.error()}} </h3>
-}@if( countryResoruce.hasValue() ) {
-<country-list [countries]="countryResoruce.value()!" />
-}
+<country-list [countries]="countryResoruce.value() ?? []" [errorMessage]="countryResoruce.error()"
+  [isEmpty]="countryResoruce.value()?.length===0" [isLoading]="countryResoruce.isLoading()" />
