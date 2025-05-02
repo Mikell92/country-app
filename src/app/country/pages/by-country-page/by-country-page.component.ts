@@ -1,8 +1,9 @@
 import { Component, inject, resource, signal } from '@angular/core';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
 import { CountryListComponent } from '../../components/country-list/country-list.component';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { CountryService } from '../../services/country.service';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-by-country-page',
@@ -14,7 +15,16 @@ export class ByCountryPageComponent {
 
   query = signal('');
 
-  countryResoruce = resource({
+  countryResoruce = rxResource({
+    request: () => ({ query: this.query() }),
+    loader: ({ request }) => {
+      if (!this.query()) return of([]);
+
+      return this.countryService.searchByCountry(request.query);
+    },
+  });
+
+  /*   countryResoruce = resource({
     request: () => ({ query: this.query() }),
     loader: async ({ request }) => {
       if (!this.query()) return [];
@@ -23,5 +33,5 @@ export class ByCountryPageComponent {
         this.countryService.searchByCountry(request.query)
       );
     },
-  });
+  }); */
 }
